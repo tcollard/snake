@@ -1,8 +1,11 @@
-import 'dart:math';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:snake/game.dart';
 
 class Snake extends StatefulWidget {
-  Snake({Key key}) : super(key: key);
+  final move;
+  Snake({this.move});
 
   @override
   _SnakeState createState() => _SnakeState();
@@ -10,56 +13,95 @@ class Snake extends StatefulWidget {
 
 class _SnakeState extends State<Snake> {
   var snakeBody;
+  Timer timer;
+  List<Positioned> snakePosition = List();
+  // bool _start = false;
+  bool _add = false;
+
+  @override
+  void initState() {
+    timer = Timer.periodic(Duration(milliseconds: 400), getSnakeNewPosition);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: printSnake(),
+      child: snakeDrawing(),
     );
   }
 
-  void startSnake() {
-    setState(() {
-      print('Start Snake');
-      final initPoint = (360 / 2 / 50);
-      snakeBody = [
-        Point(initPoint, initPoint + 1),
-        Point(initPoint, initPoint),
-        Point(initPoint, initPoint - 1),
-      ];
-    });
+  Widget snakeDrawing() {
+    if (snakeBody.length > 0) {
+        int index = 0;
+        snakeBody.forEach((elem) {
+          snakePosition.add(
+            Positioned(
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: (index == (snakeBody.length - 1) && index != 0 && _add == true) ? Colors.green : Colors.red,
+                  shape: BoxShape.rectangle,
+                  border: Border.all(color: Colors.green),
+                ),
+              ),
+              left: elem.x * 10,
+              top: elem.y * 10,
+            ),
+          );
+          index += 1;
+        });
+        if (index == snakeBody.length && index > 1 && _add == true)
+          snakeBody.removeLast();
+          setState(() {
+            _add = false;
+          });
+      return Stack(children: snakePosition);
+    } else {
+      return null;
+    }
   }
 
-  Widget printSnake() {
-    startSnake();
-    List<Positioned> snakePosition = List();
-    snakeBody.forEach((elem) {
-      snakePosition.add(Positioned(
-        child: Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.rectangle,
-          ),
-        ),
-        left: elem.x * 10,
-        right: elem.y * 10,
-      ));
+  void getSnakeNewPosition(Timer timer) {
+    final MoveWidgetState toto = MoveWidget.of(context);
+    print('get position $toto');
+    setState(() {
+      if (toto.start == false) {
+        final initPoint = 360 / 2 / 10;
+        snakeBody = [
+          Point(initPoint, initPoint - 1),
+          Point(initPoint, initPoint),
+          Point(initPoint, initPoint + 1),
+        ];
+        // _start = true;
+      } else {
+        Point headSnake = snakeBody[0];
+        switch (toto.move) {
+          case 'Down':
+              snakeBody.insert(0, Point(headSnake.x, headSnake.y + 1));            
+            break;
+          case 'Left':
+              snakeBody.insert(0, Point(headSnake.x - 1, headSnake.y));
+            break;
+          case 'Right':
+              snakeBody.insert(0, Point(headSnake.x + 1, headSnake.y));
+            break;
+          default:
+            snakeBody.insert(0, Point(headSnake.x, headSnake.y - 1));
+        }
+        _add = true;
+      }      
     });
-    print('Return Snack: $snakePosition');
-    return Stack(children: snakePosition);
-    //   return Text(
-    //           'Snake Test',
-    //           style: TextStyle(color: Colors.white),
-    //         );
   }
 }
 
-/*
-To Do:
-  - Create a snake line of N length
-  - Move it :
-    - Remove last position of snake
-    - Add new one on the top of direction
-*/
+class Point {
+  double x;
+  double y;
+
+  Point(double x, double y) {
+    this.x = x;
+    this.y = y;
+  }
+}

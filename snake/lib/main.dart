@@ -28,8 +28,5 @@ class SnakePage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Game(),
     );
-    // return Container(
-    //   child: Text('Snake'),
-    // );
   }
 }
