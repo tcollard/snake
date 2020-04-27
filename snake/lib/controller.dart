@@ -1,95 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:snake/game.dart';
+import 'package:snake/screen.dart';
+import 'package:swipedetector/swipedetector.dart';
 
-class SnakeController extends StatefulWidget {
-  const SnakeController();
+class Controller extends StatefulWidget {
+  Controller({Key key}) : super(key: key);
 
   @override
-  _SnakeControllerState createState() => _SnakeControllerState();
+  _ControllerState createState() => _ControllerState();
 }
 
-class _SnakeControllerState extends State<SnakeController> {
+class _ControllerState extends State<Controller> {
   @override
   Widget build(BuildContext context) {
     final DisplayGameState gameInfo = DisplayGame.of(context);
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: RaisedButton(
-            onPressed: () {
-              if (gameInfo.move != 'Down') {
-                setState(() {
-                  gameInfo.changeDirection('Up');
-                });
-              }
-            },
-            color: Colors.orangeAccent,
-            child: Icon(Icons.keyboard_arrow_up),
-          ),
-        ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  onPressed: () {
-                    if (gameInfo.move != 'Right') {
-                      setState(() {
-                        gameInfo.changeDirection('Left');
-                      });
-                    }
-                  },
-                  color: Colors.orangeAccent,
-                  child: Icon(Icons.keyboard_arrow_left),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  onPressed: () {
-                    if (gameInfo.move != 'Left') {
-                      setState(() {
-                        gameInfo.changeDirection('Right');
-                      });
-                    }
-                  },
-                  color: Colors.orangeAccent,
-                  child: Icon(Icons.keyboard_arrow_right),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: RaisedButton(
-            onPressed: () {
-              if (gameInfo.move != 'Up') {
-                setState(() {
-                  gameInfo.changeDirection('Down');
-                });
-              }
-            },
-            color: Colors.orangeAccent,
-            child: Icon(Icons.keyboard_arrow_down),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: RaisedButton(
-              onPressed: () {
-                print('Start game');
-                setState(() {
-                  gameInfo.startGame();
-                });
-              },
-              color: Colors.blueAccent,
-              child: Icon(Icons.play_arrow)),
-        ),
-      ],
+
+    return SwipeDetector(
+      onSwipeUp: () {
+        if (gameInfo.move != 'Down') {
+          setState(() {
+            gameInfo.changeDirection('Up');
+          });
+        }
+      },
+      onSwipeDown: () {
+        if (gameInfo.move != 'Up') {
+          setState(() {
+            gameInfo.changeDirection('Down');
+          });
+        }
+      },
+      onSwipeLeft: () {
+        if (gameInfo.move != 'Right') {
+          setState(() {
+            gameInfo.changeDirection('Left');
+          });
+        }
+      },
+      onSwipeRight: () {
+        if (gameInfo.move != 'Left') {
+          setState(() {
+            gameInfo.changeDirection('Right');
+          });
+        }
+      },
+      swipeConfiguration: SwipeConfiguration(
+        verticalSwipeMinDisplacement: 20.0,
+        verticalSwipeMinVelocity: 50,
+        horizontalSwipeMinDisplacement: 20.0,
+        horizontalSwipeMinVelocity: 50,
+      ),
+      child: SnakeScreen(),
     );
   }
 }

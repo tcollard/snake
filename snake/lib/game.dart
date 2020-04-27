@@ -35,11 +35,15 @@ class DisplayGame extends StatefulWidget {
 class DisplayGameState extends State<DisplayGame> {
   String move;
   bool start;
+  int bestScore;
+  int score;
 
   @override
   void initState() {
     start = false;
     move = 'Up';
+    score = 0;
+    bestScore = 100;
     super.initState();
   }
 
@@ -76,23 +80,7 @@ class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     return DisplayGame(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 50.0),
-              child: Container(
-                width: 360,
-                height: 360,
-                color: Colors.green,
-                child: Snake(),
-              ),
-            ),
-            SnakeController(),
-          ],
-        ),
-      ),
+      child: Controller(),
     );
   }
 }
