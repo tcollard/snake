@@ -2,39 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:snake/controller.dart';
 import 'package:snake/snake.dart';
 
-class MyWidget extends InheritedWidget {
-  MyWidget({Key key, @required this.child, @required this.move}) : super(key: key, child: child);
+class ParentWidget extends InheritedWidget {
+  ParentWidget({Key key, @required this.child, @required this.move})
+      : super(key: key, child: child);
 
   final Widget child;
-  final MoveWidgetState move;
+  final DisplayGameState move;
 
-  static MyWidget of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(MyWidget)as MyWidget);
+  static ParentWidget of(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(ParentWidget) as ParentWidget);
   }
 
   @override
-  bool updateShouldNotify( MyWidget oldWidget) {
+  bool updateShouldNotify(ParentWidget oldWidget) {
     return true;
   }
 }
 
-class MoveWidget extends StatefulWidget {
-  MoveWidget({Key key, this.child}) : super(key: key);
+class DisplayGame extends StatefulWidget {
+  DisplayGame({Key key, this.child}) : super(key: key);
 
   final Widget child;
   @override
-  MoveWidgetState createState() => MoveWidgetState();
+  DisplayGameState createState() => DisplayGameState();
 
-  static MoveWidgetState of(BuildContext context){
-    return (context.inheritFromWidgetOfExactType(MyWidget) as MyWidget).move;
+  static DisplayGameState of(BuildContext context) {
+    return (context.inheritFromWidgetOfExactType(ParentWidget) as ParentWidget)
+        .move;
   }
 }
 
-class MoveWidgetState extends State<MoveWidget> {
-  
+class DisplayGameState extends State<DisplayGame> {
   String move;
-  bool start = false;
-  
+  bool start;
+
+  @override
+  void initState() {
+    start = false;
+    move = 'Up';
+    super.initState();
+  }
+
   void changeDirection(String direction) {
     setState(() {
       move = direction;
@@ -44,14 +52,13 @@ class MoveWidgetState extends State<MoveWidget> {
   void startGame() {
     setState(() {
       start = !start;
+      move = 'Up';
     });
   }
-  String get getDirection => move;
-  bool get statusGame => start;
-  
+
   @override
   Widget build(BuildContext context) {
-    return MyWidget(
+    return ParentWidget(
       move: this,
       child: widget.child,
     );
@@ -68,7 +75,7 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
-    return new MoveWidget(
+    return DisplayGame(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

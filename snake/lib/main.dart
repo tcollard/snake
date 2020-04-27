@@ -14,13 +14,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SnakePage(),
+      home: SnakeGame(),
     );
   }
 }
 
-class SnakePage extends StatelessWidget {
-  const SnakePage({Key key}) : super(key: key);
+class SnakeGame extends StatelessWidget {
+  const SnakeGame({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
