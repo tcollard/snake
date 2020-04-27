@@ -9,27 +9,20 @@ class SnakeController extends StatefulWidget {
 }
 
 class _SnakeControllerState extends State<SnakeController> {
-
-  // @override
-  // void initState() {
-    // final toto = MyWidget.of(context);
-    // toto.move = direction.Up;
-    // print('TOTO: ${toto.move}');
-    // super.initState();
-  // }
   @override
   Widget build(BuildContext context) {
-    final MoveWidgetState move = MoveWidget.of(context);
+    final DisplayGameState gameInfo = DisplayGame.of(context);
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.all(8.0),
           child: RaisedButton(
             onPressed: () {
-              print('Go Up');
-              setState(() {
-                move.changeDirection('Up');
-              });
+              if (gameInfo.move != 'Down') {
+                setState(() {
+                  gameInfo.changeDirection('Up');
+                });
+              }
             },
             color: Colors.orangeAccent,
             child: Icon(Icons.keyboard_arrow_up),
@@ -43,11 +36,11 @@ class _SnakeControllerState extends State<SnakeController> {
                 padding: EdgeInsets.all(8.0),
                 child: RaisedButton(
                   onPressed: () {
-                    print('Go Left');
-                    setState(() {
-                      move.changeDirection('Left');
-                      // widget.move = direction.Left;
-                    });
+                    if (gameInfo.move != 'Right') {
+                      setState(() {
+                        gameInfo.changeDirection('Left');
+                      });
+                    }
                   },
                   color: Colors.orangeAccent,
                   child: Icon(Icons.keyboard_arrow_left),
@@ -57,10 +50,11 @@ class _SnakeControllerState extends State<SnakeController> {
                 padding: EdgeInsets.all(8.0),
                 child: RaisedButton(
                   onPressed: () {
-                    print('Go Right');
-                    setState(() {
-                      move.changeDirection('Right');
-                    });
+                    if (gameInfo.move != 'Left') {
+                      setState(() {
+                        gameInfo.changeDirection('Right');
+                      });
+                    }
                   },
                   color: Colors.orangeAccent,
                   child: Icon(Icons.keyboard_arrow_right),
@@ -73,10 +67,11 @@ class _SnakeControllerState extends State<SnakeController> {
           padding: EdgeInsets.all(8.0),
           child: RaisedButton(
             onPressed: () {
-              print('Go Down');
-              setState(() {
-                move.changeDirection('Down');
-              });
+              if (gameInfo.move != 'Up') {
+                setState(() {
+                  gameInfo.changeDirection('Down');
+                });
+              }
             },
             color: Colors.orangeAccent,
             child: Icon(Icons.keyboard_arrow_down),
@@ -87,9 +82,9 @@ class _SnakeControllerState extends State<SnakeController> {
           child: RaisedButton(
               onPressed: () {
                 print('Start game');
-                  setState(() {
-                    move.startGame();
-                  });
+                setState(() {
+                  gameInfo.startGame();
+                });
               },
               color: Colors.blueAccent,
               child: Icon(Icons.play_arrow)),
