@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snake/game.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InfoGame extends StatefulWidget {
   InfoGame({Key key, this.child}) : super(key: key);
@@ -21,8 +22,20 @@ class InfoGameState extends State<InfoGame> {
   void initState() {
     info.move = 'Up';
     info.score = 0;
-    info.bestScore = 100;
+    getBestScore();
     super.initState();
+  }
+
+  getBestScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      info.bestScore = prefs.getInt('bestScore') ?? 0;
+    });
+  }
+
+  saveScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('bestScore', info.score);
   }
 
   void changeDirection(String direction) {
@@ -34,14 +47,17 @@ class InfoGameState extends State<InfoGame> {
   void reinitInfo() {
     setState(() {
       info.move = 'Up';
-      info.score = 0;
+      if (info.score > info.bestScore) {
+        saveScore();
+        info.bestScore = info.score;
+        info.score = 0;
+      }
     });
   }
 
   void updateScore() {
     Future.delayed(Duration(milliseconds: 1), () {
       setState(() {
-        print('update Score');
         info.score += 1;
       });
     });
@@ -62,6 +78,6 @@ class Info {
   String move;
 
   Info() {
-   // 
+    //
   }
 }

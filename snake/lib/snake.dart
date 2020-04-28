@@ -16,9 +16,11 @@ class _SnakeState extends State<Snake> {
   bool _start = false;
   bool _add = false;
   bool _isEaten = true;
-  bool borderCollision = false;
+  bool collision = false;
+  int oldScore = 0;
+  int score = 0;
   Timer timer;
-  Duration duration = Duration(milliseconds: 400);
+  int duration = 400;
   List<Positioned> snakePosition = List();
   Positioned cubePosition;
   Point cubePoint;
@@ -26,11 +28,19 @@ class _SnakeState extends State<Snake> {
 
   @override
   Widget build(BuildContext context) {
-    if (_start == true && borderCollision == false) {
+    if (_start == true && collision == false) {
       if (_isEaten == true) {
         _isEaten = false;
         cubePoint = generateCubePoint(this.widget.width, this.widget.height);
         cubePosition = generateCubePosition(cubePoint);
+      }
+      if (oldScore != score) {
+        oldScore = score;
+        timer.cancel();
+        duration -= 10;
+        if (duration <= 40) duration = 40;
+        timer =
+            Timer.periodic(Duration(milliseconds: duration), getSnakePosition);
       }
       return screenDrawing(cubePosition, cubePoint);
     } else {
@@ -43,15 +53,12 @@ class _SnakeState extends State<Snake> {
       icon: Icon(Icons.play_arrow),
       iconSize: 80.0,
       onPressed: () {
-        if (timer != null && timer.isActive) {
-          timer.cancel();
-        }
-
-        print('Game Start');
         _start = true;
         _add = false;
         _isEaten = true;
-        timer = Timer.periodic(duration, getSnakePosition);
+        duration = 400;
+        timer =
+            Timer.periodic(Duration(milliseconds: duration), getSnakePosition);
         final initPoint = this.widget.width ~/ 2 ~/ 10;
         final InfoGameState gameInfo = InfoGame.of(context);
         gameInfo.reinitInfo();
@@ -60,7 +67,7 @@ class _SnakeState extends State<Snake> {
           Point(initPoint, initPoint),
           Point(initPoint, initPoint + 1),
         ];
-        borderCollision = false;
+        collision = false;
       },
     );
   }
@@ -93,7 +100,7 @@ class _SnakeState extends State<Snake> {
 
       final InfoGameState gameInfo = InfoGame.of(context);
       gameInfo.updateScore();
-      print('is Eaten');
+      score += 1;
     } else if (index == snakeBody.length && index > 1 && _add == true) {
       snakeBody.removeLast();
     }
@@ -120,12 +127,28 @@ class _SnakeState extends State<Snake> {
           snakeBody.insert(0, Point(headSnake.x, headSnake.y - 1));
       }
       _add = true;
-      if ((snakeBody[0].x >= this.widget.width / 10 - 1 ||
-              snakeBody[0].x < 0) ||
-          (snakeBody[0].y >= (this.widget.height - 80) / 10 - 1 ||
-              snakeBody[0].y < 0)) {
-        borderCollision = true;
-      }
+      collision = checkCollision();
     });
+  }
+
+  bool checkCollision() {
+    bool _isCollised = false;
+    if ((snakeBody[0].x >= this.widget.width / 10 - 1 || snakeBody[0].x < 0) ||
+        (snakeBody[0].y >= (this.widget.height - 80) / 10 - 1 ||
+            snakeBody[0].y < 0)) {
+      timer.cancel();
+      _isCollised = true;
+    }
+    int i = 0;
+    snakeBody.forEach((element) async {
+      if (i != 0 &&
+          snakeBody[0].x == element.x &&
+          snakeBody[0].y == element.y) {
+        timer.cancel();
+        _isCollised = true;
+      }
+      i += 1;
+    });
+    return _isCollised;
   }
 }
