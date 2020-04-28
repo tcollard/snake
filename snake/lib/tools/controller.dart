@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:snake/game.dart';
+import 'package:snake/tools/infoGame.dart';
 import 'package:snake/screen.dart';
 import 'package:swipedetector/swipedetector.dart';
 
@@ -13,32 +13,32 @@ class Controller extends StatefulWidget {
 class _ControllerState extends State<Controller> {
   @override
   Widget build(BuildContext context) {
-    final DisplayGameState gameInfo = DisplayGame.of(context);
+    final InfoGameState gameInfo = InfoGame.of(context);
 
     return SwipeDetector(
       onSwipeUp: () {
-        if (gameInfo.move != 'Down') {
+        if (gameInfo.info.move != 'Down') {
           setState(() {
             gameInfo.changeDirection('Up');
           });
         }
       },
       onSwipeDown: () {
-        if (gameInfo.move != 'Up') {
+        if (gameInfo.info.move != 'Up') {
           setState(() {
             gameInfo.changeDirection('Down');
           });
         }
       },
       onSwipeLeft: () {
-        if (gameInfo.move != 'Right') {
+        if (gameInfo.info.move != 'Right') {
           setState(() {
             gameInfo.changeDirection('Left');
           });
         }
       },
       onSwipeRight: () {
-        if (gameInfo.move != 'Left') {
+        if (gameInfo.info.move != 'Left') {
           setState(() {
             gameInfo.changeDirection('Right');
           });
