@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:snake/tools/infoGame.dart';
 import 'package:snake/helpers/snakeTools.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 class Snake extends StatefulWidget {
   final double width;
@@ -25,6 +27,8 @@ class _SnakeState extends State<Snake> {
   Positioned cubePosition;
   Point cubePoint;
   var snakeBody = [];
+  AudioCache cache = AudioCache(prefix: 'audio/');
+  AudioPlayer player;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +48,16 @@ class _SnakeState extends State<Snake> {
       }
       return screenDrawing(cubePosition, cubePoint);
     } else {
+      if (player != null) {
+        player.stop();
+      }
+      // player.clear('snake-jazz.mp3');
       return startPlayer();
     }
+  }
+
+  void playSound() async {
+        player = await cache.loop('snake-jazz.mp3');
   }
 
   Widget startPlayer() {
@@ -57,6 +69,7 @@ class _SnakeState extends State<Snake> {
         _add = false;
         _isEaten = true;
         duration = 400;
+        playSound();
         timer =
             Timer.periodic(Duration(milliseconds: duration), getSnakePosition);
         final initPoint = this.widget.width ~/ 2 ~/ 10;
@@ -97,7 +110,7 @@ class _SnakeState extends State<Snake> {
     });
     if (snakeBody[0].x == cubePoint.x && snakeBody[0].y == cubePoint.y) {
       _isEaten = true;
-
+      cache.play('crash.mp3');
       final InfoGameState gameInfo = InfoGame.of(context);
       gameInfo.updateScore();
       score += 1;

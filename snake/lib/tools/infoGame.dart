@@ -22,20 +22,20 @@ class InfoGameState extends State<InfoGame> {
   void initState() {
     info.move = 'Up';
     info.score = 0;
-    getBestScore();
+    gethighScore();
     super.initState();
   }
 
-  getBestScore() async {
+  gethighScore() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      info.bestScore = prefs.getInt('bestScore') ?? 0;
+      info.highScore = prefs.getInt('highScore') ?? 0;
     });
   }
 
   saveScore() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('bestScore', info.score);
+    prefs.setInt('highScore', info.score);
   }
 
   void changeDirection(String direction) {
@@ -47,9 +47,9 @@ class InfoGameState extends State<InfoGame> {
   void reinitInfo() {
     setState(() {
       info.move = 'Up';
-      if (info.score > info.bestScore) {
+      if (info.score > info.highScore) {
         saveScore();
-        info.bestScore = info.score;
+        info.highScore = info.score;
         info.score = 0;
       }
     });
@@ -74,7 +74,7 @@ class InfoGameState extends State<InfoGame> {
 
 class Info {
   int score;
-  int bestScore;
+  int highScore;
   String move;
 
   Info() {
