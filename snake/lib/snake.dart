@@ -53,8 +53,6 @@ class _SnakeState extends State<Snake> {
         playSound();
         refresh.initTimer(duration.getDuration(), getSnakePosition);
         final initPoint = this.widget.width ~/ 2 ~/ 10;
-        final InfoGameState gameInfo = InfoGame.of(context);
-        gameInfo.reinitInfo();
         snakeBody = [
           Point(initPoint, initPoint - 1),
           Point(initPoint, initPoint),
@@ -125,12 +123,15 @@ class _SnakeState extends State<Snake> {
   }
 
   void checkCollision() {
+    final InfoGameState gameInfo = InfoGame.of(context);
+    
     if ((snakeBody[0].x >= this.widget.width / 10 - 1 || snakeBody[0].x < 0) ||
         (snakeBody[0].y >= (this.widget.height - 80) / 10 - 1 ||
             snakeBody[0].y < 0)) {
       refresh.stopTimer();
       check.setStart(false);
       check.setCollision(false);
+      gameInfo.reinitInfo();
       return;
     }
     int i = 0;
@@ -141,6 +142,7 @@ class _SnakeState extends State<Snake> {
         refresh.stopTimer();
         check.setStart(false);
         check.setCollision(false);
+        gameInfo.reinitInfo();
         return;
       }
       i += 1;
@@ -166,5 +168,4 @@ class _SnakeState extends State<Snake> {
   void playSound() async {
     player = await cache.loop('snake-jazz.mp3');
   }
-
 }
