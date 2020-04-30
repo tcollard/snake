@@ -22,11 +22,12 @@ class InfoGameState extends State<InfoGame> {
   void initState() {
     info.move = 'Up';
     info.score = 0;
-    gethighScore();
+    info.accelerate = false;
+    getHighScore();
     super.initState();
   }
 
-  gethighScore() async {
+  getHighScore() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       info.highScore = prefs.getInt('highScore') ?? 0;
@@ -47,6 +48,7 @@ class InfoGameState extends State<InfoGame> {
   void reinitInfo() {
     setState(() {
       info.move = 'Up';
+      info.accelerate = false;
       if (info.score > info.highScore) {
         saveScore();
         info.highScore = info.score;
@@ -54,6 +56,14 @@ class InfoGameState extends State<InfoGame> {
       }
     });
   }
+
+  void updateAcceleration() {
+    setState(() {
+      info.accelerate = !info.accelerate;
+    });
+  }
+
+  bool getAcceleration() => info.accelerate;
 
   void updateScore() {
     Future.delayed(Duration(milliseconds: 1), () {
@@ -76,6 +86,7 @@ class Info {
   int score;
   int highScore;
   String move;
+  bool accelerate;
 
   Info() {
     //

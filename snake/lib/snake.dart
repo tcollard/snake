@@ -1,63 +1,44 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:snake/helpers/cubeGenerator.dart';
+import 'package:snake/helpers/snakeHelpers.dart';
 import 'package:snake/tools/infoGame.dart';
-import 'package:snake/helpers/snakeTools.dart';
 import 'package:audioplayers/audio_cache.dart';
 
 class Snake extends StatefulWidget {
   final double width;
   final double height;
+
   Snake({Key key, this.width, this.height}) : super(key: key);
 
+  @override
   _SnakeState createState() => _SnakeState();
 }
 
 class _SnakeState extends State<Snake> {
-  bool _start = false;
-  bool _add = false;
-  bool _isEaten = true;
-  bool collision = false;
-  int oldScore = 0;
-  int score = 0;
-  Timer timer;
-  int duration = 400;
-  List<Positioned> snakePosition = List();
+  TimerDuration duration = TimerDuration();
+  Checker check = Checker();
+  Score score = Score();
+  Refresh refresh = Refresh();
   Positioned cubePosition;
   Point cubePoint;
   var snakeBody = [];
+  List<Positioned> snakePosition = List();
   AudioCache cache = AudioCache(prefix: 'audio/');
   AudioPlayer player;
 
   @override
   Widget build(BuildContext context) {
-    if (_start == true && collision == false) {
-      if (_isEaten == true) {
-        _isEaten = false;
-        cubePoint = generateCubePoint(this.widget.width, this.widget.height);
-        cubePosition = generateCubePosition(cubePoint);
-      }
-      if (oldScore != score) {
-        oldScore = score;
-        timer.cancel();
-        duration -= 10;
-        if (duration <= 40) duration = 40;
-        timer =
-            Timer.periodic(Duration(milliseconds: duration), getSnakePosition);
-      }
+    if (check.getStart() && !check.getCollision()) {
+      setDrawing();
       return screenDrawing(cubePosition, cubePoint);
     } else {
       if (player != null) {
         player.stop();
       }
-      // player.clear('snake-jazz.mp3');
       return startPlayer();
     }
-  }
-
-  void playSound() async {
-        player = await cache.loop('snake-jazz.mp3');
   }
 
   Widget startPlayer() {
@@ -65,13 +46,12 @@ class _SnakeState extends State<Snake> {
       icon: Icon(Icons.play_arrow),
       iconSize: 80.0,
       onPressed: () {
-        _start = true;
-        _add = false;
-        _isEaten = true;
-        duration = 400;
+        check = Checker();
+        check.setStart(true);
+        duration = TimerDuration();
+        score = Score();
         playSound();
-        timer =
-            Timer.periodic(Duration(milliseconds: duration), getSnakePosition);
+        refresh.initTimer(duration.getDuration(), getSnakePosition);
         final initPoint = this.widget.width ~/ 2 ~/ 10;
         final InfoGameState gameInfo = InfoGame.of(context);
         gameInfo.reinitInfo();
@@ -80,7 +60,6 @@ class _SnakeState extends State<Snake> {
           Point(initPoint, initPoint),
           Point(initPoint, initPoint + 1),
         ];
-        collision = false;
       },
     );
   }
@@ -89,35 +68,23 @@ class _SnakeState extends State<Snake> {
     int index = 0;
     snakePosition = [cubePosition];
     snakeBody.forEach((elem) {
-      snakePosition.add(
-        Positioned(
-          child: Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
-              color: (index == (snakeBody.length - 1) && _add == true)
-                  ? Colors.green
-                  : Colors.red,
-              shape: BoxShape.rectangle,
-              border: Border.all(width: 0, color: Colors.green),
-            ),
-          ),
-          left: (elem.x * 10).toDouble(),
-          top: (elem.y * 10).toDouble(),
-        ),
-      );
+      snakePosition.add(generateCubePosition(
+          elem,
+          (index == (snakeBody.length - 1) && check.getAdd())
+              ? Colors.green
+              : Colors.black));
       index += 1;
     });
     if (snakeBody[0].x == cubePoint.x && snakeBody[0].y == cubePoint.y) {
-      _isEaten = true;
+      check.setIsEaten(true);
       cache.play('crash.mp3');
       final InfoGameState gameInfo = InfoGame.of(context);
       gameInfo.updateScore();
-      score += 1;
-    } else if (index == snakeBody.length && index > 1 && _add == true) {
+      score.setScore();
+    } else if (index == snakeBody.length && index > 1 && check.getAdd()) {
       snakeBody.removeLast();
     }
-    _add = false;
+    check.setAdd(false);
     return Stack(children: snakePosition);
   }
 
@@ -139,29 +106,65 @@ class _SnakeState extends State<Snake> {
         default:
           snakeBody.insert(0, Point(headSnake.x, headSnake.y - 1));
       }
-      _add = true;
-      collision = checkCollision();
+      check.setAdd(true);
+      checkCollision();
+      if (!check.getIsAccelerate() &&
+          gameInfo.getAcceleration() &&
+          duration.getDuration() > 100 &&
+          !check.getCollision()) {
+        check.setIsAccelerate(true);
+        refresh.reInitTimer(duration.getAccelearation(), getSnakePosition);
+      } else if (check.getIsAccelerate() &&
+          !gameInfo.getAcceleration() &&
+          duration.getDuration() > 100 &&
+          !check.getCollision()) {
+        check.setIsAccelerate(false);
+        refresh.reInitTimer(duration.getDuration(), getSnakePosition);
+      }
     });
   }
 
-  bool checkCollision() {
-    bool _isCollised = false;
+  void checkCollision() {
     if ((snakeBody[0].x >= this.widget.width / 10 - 1 || snakeBody[0].x < 0) ||
         (snakeBody[0].y >= (this.widget.height - 80) / 10 - 1 ||
             snakeBody[0].y < 0)) {
-      timer.cancel();
-      _isCollised = true;
+      refresh.stopTimer();
+      check.setStart(false);
+      check.setCollision(false);
+      return;
     }
     int i = 0;
     snakeBody.forEach((element) async {
       if (i != 0 &&
           snakeBody[0].x == element.x &&
           snakeBody[0].y == element.y) {
-        timer.cancel();
-        _isCollised = true;
+        refresh.stopTimer();
+        check.setStart(false);
+        check.setCollision(false);
+        return;
       }
       i += 1;
     });
-    return _isCollised;
   }
+
+  void setDrawing() {
+    if (check.getIsEaten()) {
+      check.setIsEaten(false);
+      cubePoint = generateCubePoint(this.widget.width, this.widget.height);
+      cubePosition = generateCubePosition(cubePoint, Colors.black);
+    }
+    if (score.isScoreDifferent()) {
+      score.setOldScore();
+      duration.reduceDuration();
+      int newDuration = check.getIsAccelerate()
+          ? duration.getAccelearation()
+          : duration.getDuration();
+      refresh.reInitTimer(newDuration, getSnakePosition);
+    }
+  }
+
+  void playSound() async {
+    player = await cache.loop('snake-jazz.mp3');
+  }
+
 }
