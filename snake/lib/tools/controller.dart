@@ -50,7 +50,14 @@ class _ControllerState extends State<Controller> {
         horizontalSwipeMinDisplacement: 20.0,
         horizontalSwipeMinVelocity: 50,
       ),
-      child: SnakeScreen(),
+      child: GestureDetector(
+        onLongPressStart: (toto) {
+          gameInfo.updateAcceleration();
+        },
+        onLongPressEnd: (toto) {
+          gameInfo.updateAcceleration();
+        },
+        child: SnakeScreen()),
     );
   }
 }
