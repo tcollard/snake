@@ -52,7 +52,7 @@ class _ScoreBarState extends State<ScoreBar> {
           border: Border.all(width: 2.0, color: Colors.black)),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Text(
-          'High Scores: ${gameInfo.info.highScore}',
+          'High Score: ${gameInfo.info.highScore}',
           style: TextStyle(fontFamily: 'PressStart2P'),
         ),
         Text(
