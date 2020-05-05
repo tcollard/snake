@@ -23,7 +23,7 @@ class _SnakeState extends State<Snake> {
   Refresh refresh = Refresh();
   Positioned cubePosition;
   Point cubePoint;
-  var snakeBody = [];
+  List<Point> snakeBody = List();
   List<Positioned> snakePosition = List();
   AudioCache cache = AudioCache(prefix: 'audio/');
   AudioPlayer player;
@@ -41,11 +41,13 @@ class _SnakeState extends State<Snake> {
     }
   }
 
-  Widget startPlayer() {
+  Widget startButton() {
     return IconButton(
       icon: Icon(Icons.play_arrow),
       iconSize: 80.0,
       onPressed: () {
+        final InfoGameState gameInfo = InfoGame.of(context);
+        gameInfo.reinitInfo();
         check = Checker();
         check.setStart(true);
         duration = TimerDuration();
@@ -60,6 +62,29 @@ class _SnakeState extends State<Snake> {
         ];
       },
     );
+  }
+
+  Widget startPlayer() {
+    if (check.getCollision()) {
+      playFail();
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'GAME OVER',
+            style: TextStyle(fontFamily: 'PressStart2P'),
+          ),
+          startButton(),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          startButton(),
+        ],
+      );
+    }
   }
 
   Widget screenDrawing(Positioned cubePosition, Point cubePoint) {
@@ -124,15 +149,15 @@ class _SnakeState extends State<Snake> {
 
   void checkCollision() {
     final InfoGameState gameInfo = InfoGame.of(context);
-    
+
     if ((snakeBody[0].x >= this.widget.width / 10 - 1 || snakeBody[0].x < 0) ||
         (snakeBody[0].y >= (this.widget.height - 80) / 10 - 1 ||
             snakeBody[0].y < 0)) {
       refresh.stopTimer();
       check.setStart(false);
-      check.setCollision(false);
+      check.setCollision(true);
       gameInfo.reinitInfo();
-      return;
+      return ;
     }
     int i = 0;
     snakeBody.forEach((element) async {
@@ -141,9 +166,9 @@ class _SnakeState extends State<Snake> {
           snakeBody[0].y == element.y) {
         refresh.stopTimer();
         check.setStart(false);
-        check.setCollision(false);
+        check.setCollision(true);
         gameInfo.reinitInfo();
-        return;
+        return ;
       }
       i += 1;
     });
@@ -167,5 +192,9 @@ class _SnakeState extends State<Snake> {
 
   void playSound() async {
     player = await cache.loop('snake-jazz.mp3');
+  }
+
+  void playFail() async {
+    player = await cache.play('oh-jeez.mp3');
   }
 }
