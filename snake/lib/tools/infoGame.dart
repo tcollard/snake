@@ -54,8 +54,8 @@ class InfoGameState extends State<InfoGame> {
       info.accelerate = false;
       if (info.score > info.highScore) {
         info.highScore = info.score;
-        info.score = 0;
       }
+      info.score = 0;
     });
   }
 
