@@ -16,28 +16,28 @@ class _ControllerState extends State<Controller> {
     final InfoGameState gameInfo = InfoGame.of(context);
 
     return SwipeDetector(
-      onSwipeUp: () {
+      onSwipeUp: () async {
         if (gameInfo.info.move != 'Down') {
           setState(() {
             gameInfo.changeDirection('Up');
           });
         }
       },
-      onSwipeDown: () {
+      onSwipeDown: () async {
         if (gameInfo.info.move != 'Up') {
           setState(() {
             gameInfo.changeDirection('Down');
           });
         }
       },
-      onSwipeLeft: () {
+      onSwipeLeft: () async {
         if (gameInfo.info.move != 'Right') {
           setState(() {
             gameInfo.changeDirection('Left');
           });
         }
       },
-      onSwipeRight: () {
+      onSwipeRight: () async {
         if (gameInfo.info.move != 'Left') {
           setState(() {
             gameInfo.changeDirection('Right');
@@ -45,10 +45,10 @@ class _ControllerState extends State<Controller> {
         }
       },
       swipeConfiguration: SwipeConfiguration(
-        verticalSwipeMinDisplacement: 20.0,
-        verticalSwipeMinVelocity: 50,
-        horizontalSwipeMinDisplacement: 20.0,
-        horizontalSwipeMinVelocity: 50,
+        verticalSwipeMinDisplacement: 10.0,
+        verticalSwipeMinVelocity: 20,
+        horizontalSwipeMinDisplacement: 10.0,
+        horizontalSwipeMinVelocity: 20,
       ),
       child: GestureDetector(
         onLongPressStart: (toto) {
