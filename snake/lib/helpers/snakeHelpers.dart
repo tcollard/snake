@@ -152,7 +152,6 @@ class BackGroundColor {
       Random random = new Random();
       _hsv = HSVColor.fromAHSV(0.8, random.nextInt(360).toDouble(), random.nextDouble(), 0.5);
       _color = _hsv.toColor();
-      // _color = Color.fromARGB(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
   }
 
 }

@@ -54,16 +54,24 @@ class _ScoreBarState extends State<ScoreBar> {
           color: _color.getColor(),
           shape: BoxShape.rectangle,
           border: Border.all(width: 2.0, color: Colors.black)),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        Text(
-          'High Score: ${gameInfo.info.highScore}',
-          style: TextStyle(fontFamily: 'PressStart2P'),
-        ),
-        Text(
-          'Score: ${gameInfo.info.score}',
-          style: TextStyle(fontFamily: 'PressStart2P'),
-        ),
-      ]),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Text(
+                'High Score: ${gameInfo.info.highScore}',
+                style: TextStyle(fontFamily: 'PressStart2P'),
+              ),
+              Text(
+                'Score: ${gameInfo.info.score}',
+                style: TextStyle(fontFamily: 'PressStart2P'),
+              ),
+            ]),
+          ),
+        ],
+      ),
     );
   }
 }
