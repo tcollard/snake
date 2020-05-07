@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:snake/snake.dart';
 import 'package:snake/tools/infoGame.dart';
+import 'package:snake/helpers/snakeHelpers.dart';
 
 class SnakeScreen extends StatefulWidget {
   SnakeScreen({Key key}) : super(key: key);
@@ -10,6 +11,7 @@ class SnakeScreen extends StatefulWidget {
 }
 
 class _SnakeScreenState extends State<SnakeScreen> {
+  BackGroundColor _color = BackGroundColor();
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
@@ -23,7 +25,7 @@ class _SnakeScreenState extends State<SnakeScreen> {
           Container(
             width: width,
             height: height - 80,
-            color: Colors.green,
+            color: _color.getColor(),
             child: Snake(width: width, height: height),
           ),
         ],
@@ -40,6 +42,8 @@ class ScoreBar extends StatefulWidget {
 }
 
 class _ScoreBarState extends State<ScoreBar> {
+  BackGroundColor _color = BackGroundColor();
+
   @override
   Widget build(BuildContext context) {
     final InfoGameState gameInfo = InfoGame.of(context);
@@ -47,7 +51,7 @@ class _ScoreBarState extends State<ScoreBar> {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-          color: Colors.green,
+          color: _color.getColor(),
           shape: BoxShape.rectangle,
           border: Border.all(width: 2.0, color: Colors.black)),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [

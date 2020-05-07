@@ -88,13 +88,14 @@ class _SnakeState extends State<Snake> {
   }
 
   Widget screenDrawing(Positioned cubePosition, Point cubePoint) {
+    BackGroundColor _color = BackGroundColor();
     int index = 0;
     snakePosition = [cubePosition];
     snakeBody.forEach((elem) {
       snakePosition.add(generateCubePosition(
           elem,
           (index == (snakeBody.length - 1) && check.getAdd())
-              ? Colors.green
+              ? _color.getColor()
               : Colors.black));
       index += 1;
     });
@@ -104,6 +105,7 @@ class _SnakeState extends State<Snake> {
       final InfoGameState gameInfo = InfoGame.of(context);
       gameInfo.updateScore();
       score.setScore();
+      _color.changeColor();
     } else if (index == snakeBody.length && index > 1 && check.getAdd()) {
       snakeBody.removeLast();
     }

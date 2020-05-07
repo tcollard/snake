@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:snake/helpers/snakeHelpers.dart';
 
 class Point {
   int x;
@@ -19,6 +20,7 @@ Point generateCubePoint(double width, double height) {
 }
 
 Positioned generateCubePosition(Point cubePoint, Color color) {
+  BackGroundColor _color = BackGroundColor();
   return Positioned(
     child: Container(
       width: 10,
@@ -26,7 +28,7 @@ Positioned generateCubePosition(Point cubePoint, Color color) {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.rectangle,
-        border: Border.all(width: 0, color: Colors.green),
+        border: Border.all(width: 0, color: _color.getColor()),
       ),
     ),
     left: (cubePoint.x * 10).toDouble(),
