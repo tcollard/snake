@@ -100,7 +100,7 @@ class _SnakeState extends State<Snake> {
           elem,
           (index == (snakeBody.length - 1) && check.getAdd())
               ? _color.trailColor()
-              : Colors.black));
+              : (gameInfo.info.newHighScore == false ) ? Colors.black : _color.getRandomColor()));
       index += 1;
     });
     if (snakeTrail.length > 0) {

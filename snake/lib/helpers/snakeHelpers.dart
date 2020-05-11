@@ -164,4 +164,10 @@ class BackGroundColor {
       _trailColor = _color.withOpacity(0.5);
   }
 
+  Color getRandomColor() {
+      Random random = new Random();
+      Color newColor = HSVColor.fromAHSV(1, random.nextInt(360).toDouble(), random.nextDouble(), 1).toColor();
+      return newColor;
+  }
+
 }

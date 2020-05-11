@@ -26,6 +26,7 @@ class InfoGameState extends State<InfoGame> {
     info.accelerate = false;
     info.endDirection = true;
     info.isStart = false;
+    info.newHighScore = false;
     super.initState();
   }
 
@@ -36,7 +37,7 @@ class InfoGameState extends State<InfoGame> {
     });
   }
 
-  Future<void>saveScore() async {
+  Future<void> saveScore() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setInt('highScore', info.score);
@@ -44,18 +45,19 @@ class InfoGameState extends State<InfoGame> {
   }
 
   void changeDirection(String direction) {
-      if (info.endDirection) {
-        info.move = direction;
-        info.endDirection = false;
-      }
+    if (info.endDirection) {
+      info.move = direction;
+      info.endDirection = false;
+    }
   }
 
-  void reinitInfo() async{
+  void reinitInfo() async {
     await saveScore();
     setState(() {
       info.move = 'Up';
       info.isStart = true;
       info.accelerate = false;
+      info.newHighScore = false;
       if (info.score > info.highScore) {
         info.highScore = info.score;
       }
@@ -64,7 +66,7 @@ class InfoGameState extends State<InfoGame> {
   }
 
   void updateAcceleration() {
-      info.accelerate = !info.accelerate;
+    info.accelerate = !info.accelerate;
   }
 
   bool getAcceleration() => info.accelerate;
@@ -73,6 +75,11 @@ class InfoGameState extends State<InfoGame> {
     Future.delayed(Duration(milliseconds: 1), () {
       setState(() {
         info.score += 1;
+        if (info.score > info.highScore && info.score - 1 == info.highScore) {
+          info.newHighScore = true;
+        } else {
+          info.newHighScore = false;
+        }
       });
     });
   }
@@ -93,6 +100,7 @@ class Info {
   bool endDirection;
   bool accelerate;
   bool isStart;
+  bool newHighScore;
 
   Info() {
     //
