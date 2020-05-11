@@ -43,10 +43,13 @@ class ScoreBar extends StatefulWidget {
 
 class _ScoreBarState extends State<ScoreBar> {
   BackGroundColor _color = BackGroundColor();
+  bool _animationTrigger = true;
 
   @override
   Widget build(BuildContext context) {
     final InfoGameState gameInfo = InfoGame.of(context);
+
+    if (gameInfo.info.isStart) _animationTrigger = !_animationTrigger;
 
     return Container(
       height: 80,
@@ -62,9 +65,17 @@ class _ScoreBarState extends State<ScoreBar> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                    Text(
-                      'Score: ${gameInfo.info.score}',
-                      style: TextStyle(fontFamily: 'PressStart2P'),
+                  AnimatedDefaultTextStyle(
+                    child: Text('Score: ${gameInfo.info.score}'),
+                    style: (_animationTrigger && gameInfo.info.score != 0)
+                        ? TextStyle(fontFamily: 'PressStart2P', fontSize: 20, color: Colors.black)
+                        : TextStyle(fontFamily: 'PressStart2P', fontSize: 15, color: Colors.black),
+                    duration: Duration(milliseconds: 200),
+                    onEnd: () {
+                      setState(() {
+                        _animationTrigger = true;
+                      });
+                    },
                   ),
                   Text(
                     'High Score: ${gameInfo.info.highScore}',

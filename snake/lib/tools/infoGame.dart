@@ -25,6 +25,7 @@ class InfoGameState extends State<InfoGame> {
     info.score = 0;
     info.accelerate = false;
     info.endDirection = true;
+    info.isStart = false;
     super.initState();
   }
 
@@ -53,6 +54,7 @@ class InfoGameState extends State<InfoGame> {
     await saveScore();
     setState(() {
       info.move = 'Up';
+      info.isStart = true;
       info.accelerate = false;
       if (info.score > info.highScore) {
         info.highScore = info.score;
@@ -90,6 +92,7 @@ class Info {
   String move;
   bool endDirection;
   bool accelerate;
+  bool isStart;
 
   Info() {
     //
