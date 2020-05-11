@@ -136,6 +136,7 @@ class BackGroundColor {
   static final BackGroundColor _singleton = BackGroundColor._internal();
   HSVColor _hsv;
   Color _color;
+  Color _trailColor;
 
   BackGroundColor._internal();
 
@@ -144,14 +145,23 @@ class BackGroundColor {
   Color getColor() {
     if (_color == null) {
       changeColor();
+      _trailColor = _color.withOpacity(0.5);
     }
     return _color;
   }
 
-  changeColor() {
+  Color trailColor() {
+    if (_trailColor == null) {
+      getColor();
+    }
+    return _trailColor;
+  }
+
+  void changeColor() {
       Random random = new Random();
       _hsv = HSVColor.fromAHSV(0.8, random.nextInt(360).toDouble(), random.nextDouble(), 0.5);
       _color = _hsv.toColor();
+      _trailColor = _color.withOpacity(0.5);
   }
 
 }

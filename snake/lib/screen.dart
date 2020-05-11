@@ -59,16 +59,18 @@ class _ScoreBarState extends State<ScoreBar> {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 15.0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              Text(
-                'High Score: ${gameInfo.info.highScore}',
-                style: TextStyle(fontFamily: 'PressStart2P'),
-              ),
-              Text(
-                'Score: ${gameInfo.info.score}',
-                style: TextStyle(fontFamily: 'PressStart2P'),
-              ),
-            ]),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                    Text(
+                      'Score: ${gameInfo.info.score}',
+                      style: TextStyle(fontFamily: 'PressStart2P'),
+                  ),
+                  Text(
+                    'High Score: ${gameInfo.info.highScore}',
+                    style: TextStyle(fontFamily: 'PressStart2P'),
+                  ),
+                ]),
           ),
         ],
       ),

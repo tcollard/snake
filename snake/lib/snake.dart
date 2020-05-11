@@ -24,6 +24,7 @@ class _SnakeState extends State<Snake> {
   Positioned cubePosition;
   Point cubePoint;
   List<Point> snakeBody = List();
+  List<Point> snakeTrail = List();
   List<Positioned> snakePosition = List();
   AudioCache cache = AudioCache(prefix: 'audio/');
   AudioPlayer player;
@@ -53,6 +54,7 @@ class _SnakeState extends State<Snake> {
         duration = TimerDuration();
         score = Score();
         playSound();
+        snakeTrail = List();
         refresh.initTimer(duration.getDuration(), getSnakePosition);
         final initPoint = this.widget.width ~/ 2 ~/ 10;
         snakeBody = [
@@ -89,27 +91,36 @@ class _SnakeState extends State<Snake> {
 
   Widget screenDrawing(Positioned cubePosition, Point cubePoint) {
     BackGroundColor _color = BackGroundColor();
+    final InfoGameState gameInfo = InfoGame.of(context);
     int index = 0;
     snakePosition = [cubePosition];
     snakeBody.forEach((elem) {
       snakePosition.add(generateCubePosition(
           elem,
           (index == (snakeBody.length - 1) && check.getAdd())
-              ? _color.getColor()
+              ? _color.trailColor()
               : Colors.black));
       index += 1;
     });
+    if (snakeTrail.length > 0) {
+      snakeTrail.forEach((element) {
+        snakePosition.add(generateCubePosition(element, _color.trailColor()));
+      });
+    }
     if (snakeBody[0].x == cubePoint.x && snakeBody[0].y == cubePoint.y) {
       check.setIsEaten(true);
       cache.play('crash.mp3');
-      final InfoGameState gameInfo = InfoGame.of(context);
       gameInfo.updateScore();
       score.setScore();
       _color.changeColor();
+      snakeTrail = List();
     } else if (index == snakeBody.length && index > 1 && check.getAdd()) {
-      snakeBody.removeLast();
+      snakeTrail.add(snakeBody.removeLast());
     }
     check.setAdd(false);
+    if (!gameInfo.info.endDirection) {
+      gameInfo.info.endDirection = true;
+    }
     return Stack(children: snakePosition);
   }
 
@@ -159,7 +170,7 @@ class _SnakeState extends State<Snake> {
       check.setStart(false);
       check.setCollision(true);
       gameInfo.reinitInfo();
-      return ;
+      return;
     }
     int i = 0;
     snakeBody.forEach((element) async {
@@ -170,7 +181,7 @@ class _SnakeState extends State<Snake> {
         check.setStart(false);
         check.setCollision(true);
         gameInfo.reinitInfo();
-        return ;
+        return;
       }
       i += 1;
     });

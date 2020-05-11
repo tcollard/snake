@@ -24,6 +24,7 @@ class InfoGameState extends State<InfoGame> {
     info.move = 'Up';
     info.score = 0;
     info.accelerate = false;
+    info.endDirection = true;
     super.initState();
   }
 
@@ -42,9 +43,10 @@ class InfoGameState extends State<InfoGame> {
   }
 
   void changeDirection(String direction) {
-    setState(() {
-      info.move = direction;
-    });
+      if (info.endDirection) {
+        info.move = direction;
+        info.endDirection = false;
+      }
   }
 
   void reinitInfo() async{
@@ -60,9 +62,7 @@ class InfoGameState extends State<InfoGame> {
   }
 
   void updateAcceleration() {
-    setState(() {
       info.accelerate = !info.accelerate;
-    });
   }
 
   bool getAcceleration() => info.accelerate;
@@ -88,6 +88,7 @@ class Info {
   int score;
   int highScore;
   String move;
+  bool endDirection;
   bool accelerate;
 
   Info() {
