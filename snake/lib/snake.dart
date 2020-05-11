@@ -5,6 +5,7 @@ import 'package:snake/helpers/cubeGenerator.dart';
 import 'package:snake/helpers/snakeHelpers.dart';
 import 'package:snake/tools/infoGame.dart';
 import 'package:audioplayers/audio_cache.dart';
+import 'package:vibration/vibration.dart';
 
 class Snake extends StatefulWidget {
   final double width;
@@ -108,12 +109,7 @@ class _SnakeState extends State<Snake> {
       });
     }
     if (snakeBody[0].x == cubePoint.x && snakeBody[0].y == cubePoint.y) {
-      check.setIsEaten(true);
-      cache.play('crash.mp3');
-      gameInfo.updateScore();
-      score.setScore();
-      _color.changeColor();
-      snakeTrail = List();
+      eatCube();
     } else if (index == snakeBody.length && index > 1 && check.getAdd()) {
       snakeTrail.add(snakeBody.removeLast());
     }
@@ -122,6 +118,21 @@ class _SnakeState extends State<Snake> {
       gameInfo.info.endDirection = true;
     }
     return Stack(children: snakePosition);
+  }
+
+  void eatCube() async {
+    final InfoGameState gameInfo = InfoGame.of(context);
+    BackGroundColor _color = BackGroundColor();
+
+    check.setIsEaten(true);
+    if (await Vibration.hasVibrator()) {
+      cache.play('crash.mp3');
+      Vibration.vibrate(duration: 50, amplitude: 128);
+    }
+    gameInfo.updateScore();
+    score.setScore();
+    _color.changeColor();
+    snakeTrail = List();
   }
 
   void getSnakePosition(Timer timer) {
