@@ -17,7 +17,6 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  swipedetector: ^1.2.0
   shared_preferences: ^0.5.7
   audioplayers: ^0.15.1
   flutter:
