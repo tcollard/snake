@@ -30,7 +30,7 @@ class TimerDuration {
   int _acceleration;
 
   TimerDuration() {
-    this._duration = 400;
+    this._duration = 300;
     this._acceleration = 100;
   }
 
